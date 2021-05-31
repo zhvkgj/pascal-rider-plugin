@@ -136,10 +136,10 @@ conditionalStatement
     ;
  
 caseStatement
-    : CASE expression OF case (SEMICOLON case)* elsePart? SEMICOLON? END
+    : CASE expression OF caseOption (SEMICOLON caseOption)* elsePart? SEMICOLON? END
     ;
     
-case
+caseOption
     : caseConstant (RANGE caseConstant)? (COMMA  caseConstant (RANGE caseConstant)?)* COLON statement
     ;
     

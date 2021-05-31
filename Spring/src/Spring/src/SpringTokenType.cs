@@ -12,22 +12,22 @@ namespace JetBrains.ReSharper.Plugins.Spring
     {
         private readonly HashSet<int> _keywords = new HashSet<int>
         {
-            PascalLexer.INT_DIV, PascalLexer.MOD, 
-            PascalLexer.XOR, PascalLexer.OR, 
-            PascalLexer.AND, PascalLexer.SHL, 
+            PascalLexer.INT_DIV, PascalLexer.MOD,
+            PascalLexer.XOR, PascalLexer.OR,
+            PascalLexer.AND, PascalLexer.SHL,
             PascalLexer.SHR, PascalLexer.NOT,
-            PascalLexer.IN, PascalLexer.IS, 
-            PascalLexer.AS, PascalLexer.NIL, 
-            PascalLexer.GOTO, PascalLexer.BEGIN, 
-            PascalLexer.END, PascalLexer.FOR, 
-            PascalLexer.DO, PascalLexer.TO, 
-            PascalLexer.DOWNTO, PascalLexer.CASE, 
-            PascalLexer.OF, PascalLexer.IF, 
-            PascalLexer.THEN, PascalLexer.ELSE, 
-            PascalLexer.OTHERWISE, PascalLexer.REPEAT, 
+            PascalLexer.IN, PascalLexer.IS,
+            PascalLexer.AS, PascalLexer.NIL,
+            PascalLexer.GOTO, PascalLexer.BEGIN,
+            PascalLexer.END, PascalLexer.FOR,
+            PascalLexer.DO, PascalLexer.TO,
+            PascalLexer.DOWNTO, PascalLexer.CASE,
+            PascalLexer.OF, PascalLexer.IF,
+            PascalLexer.THEN, PascalLexer.ELSE,
+            PascalLexer.OTHERWISE, PascalLexer.REPEAT,
             PascalLexer.UNTIL, PascalLexer.WHILE,
-            
         };
+
         public SpringTokenType(string s, int index) : base(s, index)
         {
         }
@@ -40,10 +40,9 @@ namespace JetBrains.ReSharper.Plugins.Spring
 
         public override bool IsWhitespace => Index == PascalLexer.WS;
 
-        public override bool IsComment => Index == PascalLexer.SINGLE_COMMENT;
-        
-        public bool IsBlockComment => Index == PascalLexer.MultiComment1 || 
-                                      Index == PascalLexer.MultiComment2;
+        public override bool IsComment => Index == PascalLexer.SINGLE_COMMENT || 
+                                          Index == PascalLexer.MultiComment1 ||
+                                          Index == PascalLexer.MultiComment2;
 
         public override bool IsStringLiteral => Index == PascalLexer.CharacterString;
         public override bool IsConstantLiteral => Index == PascalLexer.SignedNumber;

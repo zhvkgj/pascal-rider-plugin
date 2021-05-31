@@ -183,11 +183,11 @@ public interface IPascalParserVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitCaseStatement([NotNull] PascalParser.CaseStatementContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="PascalParser.case"/>.
+	/// Visit a parse tree produced by <see cref="PascalParser.caseOption"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitCase([NotNull] PascalParser.CaseContext context);
+	Result VisitCaseOption([NotNull] PascalParser.CaseOptionContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="PascalParser.caseConstant"/>.
 	/// </summary>

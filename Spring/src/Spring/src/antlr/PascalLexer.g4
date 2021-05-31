@@ -60,15 +60,7 @@ fragment DelimitedComment
     : MultiComment1
     | MultiComment2
     ;
-
-CharacterString: (QuotedString | ControlString)+;
-QuotedString: QUOTE StringCharacter+ QUOTE;
-StringCharacter: ~['\r\n] | '\'\'';
-ControlString: (SHARP UnsignedInteger)+; 
-
-LABEL: DigitSeq | IDENT;
-
-SIGN: ADD | SUB;
+    
 DOLLAR: '$';
 AMPERSAND: '&';
 AT: '@';
@@ -84,6 +76,7 @@ MULT: '*';
 DIV: '/';
 ADD: '+';
 SUB: '-';
+SIGN: ADD | SUB;
 
 // integrals ops
 INT_DIV: D I V;
@@ -147,10 +140,11 @@ IDENT: Letter (Letter | Digit | Underscore)*;
 fragment Underscore: '_';
 fragment Letter: [a-zA-Z];
 
-SYMBOL
-    : Letter
-    | Digit
-    | HexDigit
-    ;
+LABEL: DigitSeq | IDENT;
+
+CharacterString: (QuotedString | ControlString)+;
+QuotedString: QUOTE StringCharacter+ QUOTE;
+StringCharacter: ~['\r\n] | '\'\'';
+ControlString: (SHARP UnsignedInteger)+; 
 
 BAD_CHARACTER: .;

@@ -286,7 +286,7 @@ public partial class PascalParserBaseVisitor<Result> : AbstractParseTreeVisitor<
 	/// <return>The visitor result.</return>
 	public virtual Result VisitCaseStatement([NotNull] PascalParser.CaseStatementContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="PascalParser.case"/>.
+	/// Visit a parse tree produced by <see cref="PascalParser.caseOption"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -294,7 +294,7 @@ public partial class PascalParserBaseVisitor<Result> : AbstractParseTreeVisitor<
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitCase([NotNull] PascalParser.CaseContext context) { return VisitChildren(context); }
+	public virtual Result VisitCaseOption([NotNull] PascalParser.CaseOptionContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="PascalParser.caseConstant"/>.
 	/// <para>

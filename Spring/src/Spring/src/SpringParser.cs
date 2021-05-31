@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using Antlr4.Runtime;
-using ICSharpCode.NRefactory.CSharp;
 using JetBrains.Application.Settings;
 using JetBrains.DocumentModel;
 using JetBrains.Lifetimes;
@@ -14,8 +11,6 @@ using JetBrains.ReSharper.Feature.Services.SelectEmbracingConstruct;
 using JetBrains.ReSharper.I18n.Services.Daemon;
 using JetBrains.ReSharper.Plugins.Spring.Generated;
 using JetBrains.ReSharper.Psi;
-using JetBrains.ReSharper.Psi.CSharp.Parsing;
-using JetBrains.ReSharper.Psi.ExtensionsAPI;
 using JetBrains.ReSharper.Psi.ExtensionsAPI.Tree;
 using JetBrains.ReSharper.Psi.Files;
 using JetBrains.ReSharper.Psi.Parsing;
@@ -27,11 +22,11 @@ namespace JetBrains.ReSharper.Plugins.Spring
 {
     internal class SpringParser : IParser
     {
-        private readonly SpringLexer myLexer;
+        private readonly ILexer myLexer;
 
         public SpringParser(ILexer lexer)
         {
-            myLexer = (SpringLexer) lexer;
+            myLexer = lexer;
         }
 
         public IFile ParseFile()
@@ -39,9 +34,12 @@ namespace JetBrains.ReSharper.Plugins.Spring
             using (var def = Lifetime.Define())
             {
                 var builder = new PsiBuilder(myLexer, SpringFileNodeType.Instance, new TokenFactory(), def.Lifetime);
-                var tokens = new CommonTokenStream(myLexer.Lexer);
+                var inputStream = new AntlrInputStream(myLexer.Buffer.GetText());
+                var lexer = new PascalLexer(inputStream); 
+                var tokens = new CommonTokenStream(lexer);
                 var parser = new PascalParser(tokens);
                 parser.AddParseListener(new TreeListener(builder));
+                parser.AddErrorListener(new ErrorListener(builder));
                 
                 var fileMark = builder.Mark();
                 parser.pascalFile();

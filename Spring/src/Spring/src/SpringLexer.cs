@@ -7,46 +7,49 @@ namespace JetBrains.ReSharper.Plugins.Spring
 {
     public class SpringLexer : ILexer
     {
-        public Lexer Lexer { get; }
+        private readonly Lexer _lexer;
+        public IBuffer Buffer { get; }
+
         private SpringToken _currentToken;
 
         public SpringLexer(IBuffer buffer)
         {
             Buffer = buffer;
-            var inputStream = new AntlrInputStream(buffer.GetText());
-            Lexer = new PascalLexer(inputStream);
+            var inputStream = new AntlrInputStream(Buffer.GetText());
+            _lexer = new PascalLexer(inputStream);
         }
+        
+        public int TokenStart => _currentToken.Token.StartIndex;
 
-        public void Start()
-        {
-            Lexer.Reset();
-            Lexer.SetInputStream(new AntlrInputStream(Buffer.GetText()));
-            Advance();
-        }
-
-        public void Advance()
-        {
-            if (Lexer.HitEOF)
-            {
-                _currentToken = null;
-            }
-            else
-            {
-                var antlrToken = Lexer.NextToken();
-                var curTypename = Lexer.Vocabulary.GetLiteralName(antlrToken.Type) ??
-                              Lexer.Vocabulary.GetSymbolicName(antlrToken.Type);
-                var curType = new SpringTokenType(curTypename, antlrToken.Type);
-                _currentToken = new SpringToken(curType, antlrToken.Text);
-            }
-        }
+        public int TokenEnd => _currentToken.Token.StopIndex + 1;
 
         public object CurrentPosition { get; set; }
 
         public TokenNodeType TokenType => _currentToken?.GetTokenType();
 
-        public int TokenStart => _currentToken.Token.StartIndex;
+        public void Start()
+        {
+            Advance();
+        }
 
-        public int TokenEnd => _currentToken.Token.StopIndex + 1;
-        public IBuffer Buffer { get; }
+        public void Advance()
+        {
+            if (_lexer.HitEOF)
+            {
+                _currentToken = null;
+            }
+            else
+            {
+                var nextToken = _lexer.NextToken();
+                var nextTokenTypeName = _lexer.Vocabulary.GetLiteralName(nextToken.Type) ??
+                                        _lexer.Vocabulary.GetSymbolicName(nextToken.Type);
+                CurrentPosition = nextToken.StartIndex;
+                _currentToken =
+                    new SpringToken(new SpringTokenType(nextTokenTypeName, nextToken.Type), nextToken.Text)
+                    {
+                        Token = nextToken
+                    };
+            }
+        }
     }
 }

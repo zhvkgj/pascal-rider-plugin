@@ -17,11 +17,6 @@ namespace JetBrains.ReSharper.Plugins.Spring
 
     class SpringSyntaxHighlightingProcessor : SyntaxHighlightingProcessor
     {
-        protected override bool IsBlockComment(TokenNodeType tokenType)
-        {
-            return ((SpringTokenType) tokenType).IsBlockComment;
-        }
-
         protected override bool IsLineComment(TokenNodeType tokenType)
         {
             return tokenType.IsComment;
