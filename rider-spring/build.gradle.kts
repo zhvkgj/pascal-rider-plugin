@@ -77,7 +77,8 @@ val repoRoot = projectDir.parentFile!!
 val resharperPluginPath = File(repoRoot, "Spring")
 val buildConfiguration = ext.properties["BuildConfiguration"] ?: "Debug"
 
-val libFiles = listOf<String>()
+val libFiles = listOf<String>(
+	"Spring/bin/$buildConfiguration/net461/Antlr4.Runtime.Standard.dll")
 
 val pluginFiles = listOf(
         "Spring/bin/$buildConfiguration/net461/JetBrains.ReSharper.Plugins.Spring")
@@ -175,7 +176,6 @@ tasks {
 
     withType<KotlinCompile> {
         kotlinOptions.jvmTarget = "1.8"
-        dependsOn("rdgen")
     }
 
     withType<Test> {
@@ -227,7 +227,7 @@ tasks {
 
     create("prepare") {
         group = riderSpringTargetsGroup
-        dependsOn("rdgen", "writeNuGetConfig", "writeRiderSdkVersionProps")
+        dependsOn("writeNuGetConfig", "writeRiderSdkVersionProps")
         doLast {
             exec {
                 executable = "dotnet"
