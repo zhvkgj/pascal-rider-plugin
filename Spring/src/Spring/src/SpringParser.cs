@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Antlr4.Runtime;
 using ICSharpCode.NRefactory.CSharp;
 using JetBrains.Application.Settings;
 using JetBrains.DocumentModel;
@@ -11,6 +12,7 @@ using JetBrains.ReSharper.Daemon.CSharp.Errors;
 using JetBrains.ReSharper.Feature.Services.Daemon;
 using JetBrains.ReSharper.Feature.Services.SelectEmbracingConstruct;
 using JetBrains.ReSharper.I18n.Services.Daemon;
+using JetBrains.ReSharper.Plugins.Spring.Generated;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Parsing;
 using JetBrains.ReSharper.Psi.ExtensionsAPI;
@@ -25,11 +27,11 @@ namespace JetBrains.ReSharper.Plugins.Spring
 {
     internal class SpringParser : IParser
     {
-        private readonly ILexer myLexer;
+        private readonly SpringLexer myLexer;
 
         public SpringParser(ILexer lexer)
         {
-            myLexer = lexer;
+            myLexer = (SpringLexer) lexer;
         }
 
         public IFile ParseFile()
@@ -37,38 +39,15 @@ namespace JetBrains.ReSharper.Plugins.Spring
             using (var def = Lifetime.Define())
             {
                 var builder = new PsiBuilder(myLexer, SpringFileNodeType.Instance, new TokenFactory(), def.Lifetime);
-                var fileMark = builder.Mark();
-
-                ParseBlock(builder);
-
-                builder.Done(fileMark, SpringFileNodeType.Instance, null);
-                var file = (IFile)builder.BuildTree();
-                return file;
-            }
-        }
-
-        private void ParseBlock(PsiBuilder builder)
-        {
-            while (!builder.Eof())
-            {
-                var tt = builder.GetTokenType();
-                if (tt == CSharpTokenType.LBRACE)
-                {
-                    var start = builder.Mark();
-                    builder.AdvanceLexer();
-                    ParseBlock(builder);
-
-                    if (builder.GetTokenType() != CSharpTokenType.RBRACE)
-                        builder.Error("Expected '}'");
-                    else
-                        builder.AdvanceLexer();
-                    
-                    builder.Done(start, SpringCompositeNodeType.BLOCK, null);
-                }
-                else if (tt == CSharpTokenType.RBRACE)
-                    return;
-                else builder.AdvanceLexer();
+                var tokens = new CommonTokenStream(myLexer.Lexer);
+                var parser = new PascalParser(tokens);
+                parser.AddParseListener(new TreeListener(builder));
                 
+                var fileMark = builder.Mark();
+                parser.pascalFile();
+                builder.Done(fileMark, SpringFileNodeType.Instance, null);
+                var file = (IFile) builder.BuildTree();
+                return file;
             }
         }
     }
